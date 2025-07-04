@@ -6,9 +6,17 @@ import json
 DATABRICKS_API_URL = st.secrets["DATABRICKS_API_URL"]
 DATABRICKS_TOKEN = st.secrets["DATABRICKS_TOKEN"]
 JOB_ID = st.secrets["JOB_ID"]
+STORED_PASSWORD = st.secrets["JOB_TRIGGER_PASSWORD"]
 
 # --- UI ---
-st.title("Databricks Job Trigger")
+st.title("TO Trigger Job")
+
+with st.expander(" Authenticate to trigger job", expanded=True):
+    entered_password = st.text_input("Enter password", type="password")
+
+    if entered_password != STORED_PASSWORD:
+        st.warning("Enter valid password to unlock job trigger.")
+        st.stop()
 
 mh_code = st.text_input("Enter MH Code(s)", value="KOL004M,SON004M")
 
@@ -29,7 +37,7 @@ if st.button("Trigger Job"):
 
     if response.status_code == 200:
         run_id = response.json().get("run_id")
-        st.success(f"✅ Job triggered successfully! Run ID: {run_id}")
+        st.success(f"Job triggered successfully! Run ID: {run_id}")
     else:
-        st.error(f"❌ Failed to trigger job. Status: {response.status_code}")
+        st.error(f" Failed to trigger job. Status: {response.status_code}")
         st.code(response.text)
